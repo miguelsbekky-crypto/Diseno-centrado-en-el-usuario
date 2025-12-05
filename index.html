@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sketches — Búsqueda y Filtrado | Fábrica de Talentos</title>
+  <style>
+    :root{
+      --bg:#F6F7FB;
+      --card:#ffffff;
+      --muted:#667085;
+      --accent:#2B6CB0;
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--bg);
+      color:#0B1220;
+      margin:0;
+      padding:24px;
+    }
+    h1{margin:0 0 4px;font-size:20px}
+    .subtitle{margin:0 0 20px;color:#64748B;font-size:14px}
+    .wrap{
+      display:flex;
+      flex-direction:column;
+      gap:32px;
+    }
+    .sketch-block{
+      background:transparent;
+    }
+    .sketch-title{
+      font-weight:700;
+      margin-bottom:4px;
+    }
+    .sketch-meta{
+      font-size:13px;
+      color:#64748B;
+      margin-bottom:10px;
+    }
+    .screen-row{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:18px;
+    }
+    .panel{
+      background:var(--card);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 6px 18px rgba(11,18,32,0.06);
+    }
+    .screen-label{
+      font-size:13px;
+      font-weight:600;
+      margin-bottom:8px;
+      color:#0F172A;
+    }
+    .mock{
+      border:1px dashed rgba(11,18,32,0.08);
+      border-radius:8px;
+      padding:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(250,251,255,0.9));
+    }
+    .search-row{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .search-row input{
+      flex:1;
+      padding:8px 10px;
+      border-radius:8px;
+      border:1px solid #E2E8F0;
+      font-size:13px;
+    }
+    .btn{
+      background:var(--accent);
+      color:#fff;
+      padding:7px 10px;
+      border-radius:8px;
+      border:none;
+      font-size:12px;
+      cursor:pointer;
+    }
+    .btn-secondary{
+      background:#6B7280;
+      color:#fff;
+      padding:6px 8px;
+      border-radius:8px;
+      border:none;
+      font-size:12px;
+      cursor:pointer;
+    }
+    .filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:8px;
+    }
+    .chip{
+      background:#F1F5F9;
+      padding:5px 9px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid transparent;
+    }
+    .chip-active{
+      border-color:var(--accent);
+      background:#E0ECFF;
+    }
+    .results{margin-top:8px}
+    .card{
+      display:flex;
+      gap:10px;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid #E5E7EB;
+      background:#fff;
+      margin-bottom:8px;
+    }
+    .thumb{
+      width:64px;
+      height:48px;
+      border-radius:6px;
+      background:linear-gradient(90deg,#E6EEF8,#F4FAFF);
+    }
+    .meta{flex:1}
+    .title{font-weight:600;font-size:13px;margin-bottom:2px}
+    .small{font-size:11px;color:var(--muted)}
+    .price{font-weight:700;font-size:12px}
+    .controls{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:4px;
+    }
+    .empty-state{
+      border-radius:8px;
+      border:1px dashed #E5E7EB;
+      padding:10px;
+      text-align:center;
+      font-size:12px;
+      color:#94A3B8;
+      margin-top:10px;
+    }
+    .desc{
+      margin-top:8px;
+      color:#334155;
+      font-size:13px;
+      line-height:1.35;
+    }
+    .label{
+      font-size:12px;
+      color:#0B1220;
+      font-weight:600;
+      margin-bottom:4px;
+    }
+
+    /* Drawer / columnas para Sketch 2 */
+    .drawer{
+      display:flex;
+      gap:10px;
+    }
+    .drawer .main{flex:1}
+    .drawer .side{
+      width:180px;
+      background:#FAFBFF;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid #E5E7EB;
+    }
+    .filter-item{margin-bottom:8px}
+    .filter-item-title{
+      font-size:11px;
+      color:#6B7280;
+      margin-bottom:4px;
+    }
+    .filter-group{
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:8px;
+    }
+    .card-grid{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid #E5E7EB;
+      background:#fff;
+    }
+    @media (max-width:860px){
+      .drawer{flex-direction:column}
+      .drawer .side{width:100%}
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <h1>Sketches — Búsqueda y filtrado de cursos</h1>
+  <p class="subtitle">
+    Tres propuestas de interfaz para la misma funcionalidad: buscar y filtrar cursos en el catálogo digital de “Fábrica de Talentos”.
+    Cada sketch incluye 2–3 pantallas principales del flujo.
+  </p>
+
+  <div class="wrap">
+
+    <!-- SKETCH 1 -->
+    <section class="sketch-block" id="sketch-1">
+      <div class="sketch-title">Sketch 1 — Lista mínima (rápida y clara)</div>
+      <div class="sketch-meta">Flujo: pantalla inicial → resultados con filtros aplicados → detalle básico del curso.</div>
+
+      <div class="screen-row">
+
+        <!-- Pantalla 1: Búsqueda inicial sin resultados -->
+        <article class="panel">
+          <div class="screen-label">Pantalla 1 — Búsqueda inicial</div>
+          <div class="mock">
+            <div class="search-row">
+              <input placeholder="Buscar cursos, p.ej. 'Diseño gráfico'" />
+              <button class="btn">Buscar</button>
+            </div>
+            <div class="filters">
+              <div class="chip chip-active">Plataforma: Todas</div>
+              <div class="chip">Precio: Todos</div>
+              <div class="chip">Duración</div>
+              <div class="chip">Nivel</div>
+            </div>
+            <div class="empty-state">
+              Escribe una palabra clave y haz clic en “Buscar” para ver cursos disponibles.
+            </div>
+          </div>
+          <p class="desc">
+            Estado inicial simple para no abrumar al usuario. Solo se muestran el buscador y filtros principales, aplicando el hallazgo de que los usuarios
+            se sienten más cómodos cuando comienzan con pocas decisiones.
+          </p>
+        </article>
+
+        <!-- Pantalla 2: Resultados con filtros -->
+        <article class="panel">
+          <div class="screen-label">Pantalla 2 — Resultados con filtros básicos</div>
+          <div class="mock">
+            <div class="search-row">
+              <input value="Diseño gráfico" />
+              <button class="btn">Buscar</button>
+            </div>
+            <div class="filters">
+              <div class="chip chip-active">Plataforma: Platzi</div>
+              <div class="chip chip-active">Precio: Gratis</div>
+              <div class="chip">Duración: Corta</div>
+              <div class="chip">Nivel: Básico</div>
+            </div>
+
+            <div class="results">
+              <div class="card">
+                <div class="thumb"></div>
+                <div class="meta">
+                  <div class="title">Introducción al Diseño Gráfico</div>
+                  <div class="small">Platzi • Básico • 4 semanas</div>
+                </div>
+                <div class="controls">
+                  <div class="price">Gratis</div>
+                  <button class="btn-secondary">Ver más</button>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="thumb"></div>
+                <div class="meta">
+                  <div class="title">Fundamentos de Identidad Visual</div>
+                  <div class="small">Platzi • Intermedio • 6 semanas</div>
+                </div>
+                <div class="controls">
+                  <div class="price">$19</div>
+                  <button class="btn-secondary">Ver más</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="desc">
+            La lista lineal facilita el escaneo vertical de opciones. Los filtros se muestran como chips activos, reforzando la idea de qué condiciones están aplicadas
+            sin recurrir a menús complejos.
+          </p>
+        </article>
+
+        <!-- Pantalla 3: Detalle básico del curso -->
+        <article class="panel">
+          <div class="screen-label">Pantalla 3 — Detalle resumen del curso</div>
+          <div class="mock">
+            <div style="margin-bottom:6px">
+              <button class="chip">&larr; Volver a resultados</button>
+            </div>
+            <div class="title">Introducción al Diseño Gráfico</div>
+            <div class="small" style="margin-bottom:6px">
+              Platzi • Nivel básico • 4 semanas • Modalidad: Remoto
+            </div>
+            <div class="small" style="margin-bottom:6px">
+              Objetivo: aprender los principios básicos de composición, color y tipografía para crear piezas visuales simples.
+            </div>
+            <div class="small" style="margin-bottom:10px">
+              Requisitos: computador con acceso a internet. No se requieren conocimientos previos.
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="price">Gratis</div>
+              <button class="btn">Ir al curso en Platzi</button>
+            </div>
+          </div>
+          <p class="desc">
+            La pantalla de detalle mantiene la estructura simple, mostrando solo la información esencial para decidir.
+            El botón de volver respeta el flujo natural del usuario entre resultados y detalle.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SKETCH 2 -->
+    <section class="sketch-block" id="sketch-2">
+      <div class="sketch-title">Sketch 2 — Drawer de filtros (exploración avanzada)</div>
+      <div class="sketch-meta">Flujo: lista inicial con filtros → filtros avanzados aplicados → estado sin resultados.</div>
+
+      <div class="screen-row">
+
+        <!-- Pantalla 1: Resultados con drawer simple -->
+        <article class="panel">
+          <div class="screen-label">Pantalla 1 — Resultados con panel de filtros</div>
+          <div class="mock">
+            <div class="drawer">
+              <div class="main">
+                <div class="search-row">
+                  <input placeholder="Buscar cursos, p.ej. 'Marketing digital'" />
+                  <button class="btn">Buscar</button>
+                </div>
+                <div class="results">
+                  <div class="card">
+                    <div class="thumb"></div>
+                    <div class="meta">
+                      <div class="title">Marketing Digital: Fundamentos</div>
+                      <div class="small">Udemy • Básico • 6 semanas</div>
+                    </div>
+                    <div class="controls">
+                      <div class="price">$15</div>
+                      <button class="btn-secondary">Ver más</button>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="thumb"></div>
+                    <div class="meta">
+                      <div class="title">Introducción a Analítica Web</div>
+                      <div class="small">Coursera • Intermedio • 8 semanas</div>
+                    </div>
+                    <div class="controls">
+                      <div class="price">Gratis</div>
+                      <button class="btn-secondary">Ver más</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <aside class="side">
+                <div class="label">Filtros</div>
+                <div class="filter-item">
+                  <div class="filter-item-title">Plataforma</div>
+                  <div class="filter-group">
+                    <span class="chip chip-active">Coursera</span>
+                    <span class="chip">Udemy</span>
+                    <span class="chip">Platzi</span>
+                  </div>
+                </div>
+                <div class="filter-item">
+                  <div class="filter-item-title">Precio</div>
+                  <div class="filter-group">
+                    <span class="chip chip-active">Gratis</span>
+                    <span class="chip">Pago</span>
+                  </div>
+                </div>
+                <div class="filter-item">
+                  <div class="filter-item-title">Idioma</div>
+                  <div class="filter-group">
+                    <span class="chip chip-active">Español</span>
+                    <span class="chip">Inglés</span>
+                  </div>
+                </div>
+                <div style="margin-top:6px;display:flex;gap:4px">
+                  <button class="btn" style="flex:1">Aplicar</button>
+                  <button class="chip" style="flex:1;text-align:center">Limpiar</button>
+                </div>
+              </aside>
+            </div>
+          </div>
+          <p class="desc">
+            El contenido principal y los filtros conviven en una sola vista.
+            El panel lateral facilita la exploración avanzada sin perder de vista la lista de cursos.
+          </p>
+        </article>
+
+        <!-- Pantalla 2: Filtros más avanzados -->
+        <article class="panel">
+          <div class="screen-label">Pantalla 2 — Filtros avanzados combinados</div>
+          <div class="mock">
+            <div class="drawer">
+              <div class="main">
+                <div class="search-row">
+                  <input value="Marketing digital" />
+                  <button class="btn">Buscar</button>
+                </div>
+                <div class="results">
+                  <div class="card">
+                    <div class="thumb"></div>
+                    <div class="meta">
+                      <div class="title">Estrategias de Redes Sociales</div>
+                      <div class="small">Coursera • Intermedio • 4 semanas</div>
+                    </div>
+                    <div class="controls">
+                      <div class="price">$25</div>
+                      <button class="btn-secondary">Ver más</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <aside class="side">
+                <div class="label">Filtros</div>
+
+                <div class="filter-item">
+                  <div class="filter-item-title">Duración</div>
+                  <div class="filter-group">
+                    <span class="chip">&lt; 8h</span>
+                    <span class="chip chip-active">8–40h</span>
+                    <span class="chip">&gt; 40h</span>
+                  </div>
+                </div>
+
+                <div class="filter-item">
+                  <div class="filter-item-title">Nivel</div>
+                  <div class="filter-group">
+                    <span class="chip">Básico</span>
+                    <span class="chip chip-active">Intermedio</span>
+                    <span class="chip">Avanzado</span>
+                  </div>
+                </div>
+
+                <div class="filter-item">
+                  <div class="filter-item-title">Modalidad</div>
+                  <div class="filter-group">
+                    <span class="chip chip-active">Remoto</span>
+                    <span class="chip">Presencial</span>
+                  </div>
+                </div>
+
+                <div style="margin-top:6px;display:flex;gap:4px">
+                  <button class="btn" style="flex:1">Aplicar filtros</button>
+                </div>
+              </aside>
+            </div>
+          </div>
+          <p class="desc">
+            Aquí se ilustran filtros combinados según los hallazgos de usuarios avanzados:
+            control detallado sobre duración, nivel y modalidad, sin esconder las opciones en menús profundos.
+          </p>
+        </article>
+
+        <!-- Pantalla 3: Sin resultados -->
+        <article class="panel">
+          <div class="screen-label">Pantalla 3 — Sin resultados</div>
+          <div class="mock">
+            <div class="drawer">
+              <div class="main">
+                <div class="search-row">
+                  <input value="Marketing digital avanzado" />
+                  <button class="btn">Buscar</button>
+                </div>
+                <div class="empty-state">
+                  No encontramos cursos que coincidan con todos los filtros.
+                  <br><br>
+                  <span class="small">Prueba quitando algunos filtros o ampliando la duración.</span>
+                </div>
+              </div>
+              <aside class="side">
+                <div class="label">Filtros</div>
+                <div class="filter-item">
+                  <div class="filter-item-title">Plataforma</div>
+                  <div class="filter-group">
+                    <span class="chip chip-active">Coursera</span>
+                    <span class="chip">Udemy</span>
+                    <span class="chip">Platzi</span>
+                  </div>
+                </div>
+                <div class="filter-item">
+                  <div class="filter-item-title">Precio</div>
+                  <div class="filter-group">
+                    <span class="chip chip-active">Pago</span>
+                    <span class="chip">Gratis</span>
+                  </div>
+                </div>
+                <button class="chip" style="width:100%;margin-top:6px;text-align:center">
+                  Limpiar filtros
+                </button>
+              </aside>
+            </div>
+          </div>
+          <p class="desc">
+            El estado sin resultados guía al usuario para modificar filtros, respondiendo al problema detectado
+            en la fase de empatía: frustración cuando “no aparece nada” y no saben qué hacer después.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SKETCH 3 -->
+    <section class="sketch-block" id="sketch-3">
+      <div class="sketch-title">Sketch 3 — Tarjetas en cuadrícula (visual & discovery)</div>
+      <div class="sketch-meta">Flujo: cuadrícula de cursos → cuadrícula con filtros rápidos → detalle con acciones de guardar/comparar.</div>
+
+      <div class="screen-row">
+
+        <!-- Pantalla 1: Resultados en cuadrícula -->
+        <article class="panel">
+          <div class="screen-label">Pantalla 1 — Resultados en cuadrícula</div>
+          <div class="mock">
+            <div class="search-row">
+              <input placeholder="Buscar cursos, p.ej. 'Inglés B1'" />
+              <button class="btn">Buscar</button>
+            </div>
+
+            <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+              <div class="small">Ordenar por: Relevancia</div>
+              <div class="filters">
+                <div class="chip chip-active">Todos</div>
+                <div class="chip">Gratis</div>
+                <div class="chip">Remoto</div>
+              </div>
+            </div>
+
+            <div class="grid" style="margin-top:8px">
+              <div class="card-grid">
+                <div style="display:flex;gap:8px;align-items:center">
+                  <div class="thumb"></div>
+                  <div>
+                    <div class="title">Curso intensivo de Inglés B1</div>
+                    <div class="small">Udemy • 6 semanas • Intermedio</div>
+                  </div>
+                </div>
+                <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center">
+                  <div class="small">Precio: $30</div>
+                  <div style="display:flex;gap:6px">
+                    <button class="chip">Guardar</button>
+                    <button class="btn-secondary">Ver más</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-grid">
+                <div style="display:flex;gap:8px;align-items:center">
+                  <div class="thumb"></div>
+                  <div>
+                    <div class="title">Inglés Conversacional Básico</div>
+                    <div class="small">Coursera • 4 semanas • Básico</div>
+                  </div>
+                </div>
+                <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center">
+                  <div class="small">Gratis</div>
+                  <div style="display:flex;gap:6px">
+                    <button class="chip">Comparar</button>
+                    <button class="btn-secondary">Ver más</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="desc">
+            Vista tipo “catálogo visual” para usuarios que eligen por apariencia y datos clave.
+            Las tarjetas permiten entender la opción en pocos segundos y acceder a acciones rápidas.
+          </p>
+        </article>
+
+        <!-- Pantalla 2: Filtros aplicados en cuadrícula -->
+        <article class="panel">
+          <div class="screen-label">Pantalla 2 — Cuadrícula filtrada (Gratis + Remoto)</div>
+          <div class="mock">
+            <div class="search-row">
+              <input value="Inglés B1" />
+              <button class="btn">Buscar</button>
+            </div>
+
+            <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+              <div class="small">Ordenar por: Mejor valorados</div>
+              <div class="filters">
+                <div class="chip">Todos</div>
+                <div class="chip chip-active">Gratis</div>
+                <div class="chip chip-active">Remoto</div>
+              </div>
+            </div>
+
+            <div class="grid" style="margin-top:8px">
+              <div class="card-grid">
+                <div style="display:flex;gap:8px;align-items:center">
+                  <div class="thumb"></div>
+                  <div>
+                    <div class="title">Inglés B1 Remoto (Intensivo)</div>
+                    <div class="small">Udemy • 5 semanas • Intermedio</div>
+                  </div>
+                </div>
+                <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center">
+                  <div class="small">Gratis</div>
+                  <div style="display:flex;gap:6px">
+                    <button class="chip">Guardar</button>
+                    <button class="btn-secondary">Comparar</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-grid">
+                <div style="display:flex;gap:8px;align-items:center">
+                  <div class="thumb"></div>
+                  <div>
+                    <div class="title">Inglés B1 Online con Tutor</div>
+                    <div class="small">Plataforma: Fábrica de Talentos • 8 semanas</div>
+                  </div>
+                </div>
+                <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center">
+                  <div class="small">Gratis</div>
+                  <div style="display:flex;gap:6px">
+                    <button class="chip">Guardar</button>
+                    <button class="btn-secondary">Ver más</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="desc">
+            Se muestra cómo cambia la cuadrícula cuando el usuario aplica filtros clave (Gratis, Remoto),
+            manteniendo las acciones rápidas visibles en cada tarjeta.
+          </p>
+        </article>
+
+        <!-- Pantalla 3: Detalle visual con acciones -->
+        <article class="panel">
+          <div class="screen-label">Pantalla 3 — Detalle visual del curso</div>
+          <div class="mock">
+            <div style="margin-bottom:6px">
+              <button class="chip">&larr; Volver a la cuadrícula</button>
+            </div>
+            <div style="display:flex;gap:10px;margin-bottom:8px">
+              <div class="thumb" style="width:80px;height:60px"></div>
+              <div>
+                <div class="title">Bootcamp Frontend Básico</div>
+                <div class="small">Platzi • 12 semanas • Nivel básico</div>
+              </div>
+            </div>
+            <div class="small" style="margin-bottom:6px">
+              En este bootcamp aprenderás HTML, CSS y JavaScript desde cero, con proyectos prácticos para construir tu primer portafolio frontend.
+            </div>
+            <div class="small" style="margin-bottom:8px">
+              Requisitos: conocimientos básicos de manejo de computador e interés en el desarrollo web.
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <div class="price">$120</div>
+              <div style="display:flex;gap:6px">
+                <button class="chip">Guardar</button>
+                <button class="chip">Comparar</button>
+                <button class="btn">Ir al curso</button>
+              </div>
+            </div>
+          </div>
+          <p class="desc">
+            En la vista de detalle se refuerzan las acciones que los usuarios mencionaron: guardar para después,
+            comparar con otros cursos y acceder directamente al curso en la plataforma original.
+          </p>
+        </article>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
